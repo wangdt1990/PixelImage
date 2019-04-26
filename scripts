@@ -1,0 +1,72 @@
+Public Sub GetPixelSub()
+ Application.ScreenUpdating = True
+ Rows.Interior.ColorIndex = vbColorIndexNull
+ Dim hwnd As Long
+ hwnd = FindWindow(vbNullString, "aviator.jpg - Windows 照片查看器")
+ Dim hDC1 As Long
+ 
+ Dim ix As Long, iy As Long
+ 
+ Dim i1 As Integer
+ Dim i2 As Integer
+ i1 = 1
+ i2 = 1
+ 
+ Dim startXPixel As Integer
+ startXPixel = 40
+ Dim endXPixel As Integer
+ endXPixel = 700
+ Dim xPixelWidth As Integer
+ xPixelWidth = endXPixel - startXPixel
+ Dim startYPixel As Integer
+ startYPixel = 120
+ Dim endYPixel As Integer
+ endYPixel = 500
+ Dim yPixelWidth As Integer
+ yPixelWidth = endYPixel - startYPixel
+ 
+ Const STEPNUM As Integer = 5
+ For ix = startXPixel To endXPixel Step STEPNUM
+  For iy = startYPixel To endYPixel Step STEPNUM
+   Dim xxx As Long
+   hDC1 = GetWindowDC(hwnd)
+   xxx = GetPixel(hDC1, ix, iy)
+   If xxx = -1 Then
+    MsgBox "xxx=-1"
+    GoTo ENDEND:
+    End If
+   arr(i1, i2) = xxx
+   i1 = i1 + 1
+   ReleaseDC hwnd, hDC1
+   Next
+   i1 = 1
+   i2 = i2 + 1
+   Next
+   
+ i1 = 1
+ i2 = 1
+ For ix = 1 To xPixelWidth / STEPNUM
+  For iy = 1 To yPixelWidth / STEPNUM
+   'Call transRGB(arr(iy, ix), iy, ix)
+   Cells(iy + 1, ix + 1).Interior.Color = arr(iy, ix)
+   Next
+   Next
+ Sheet2.Rows.ClearContents
+ Sheet2.Rows.Interior.ColorIndex = vbColorIndexNull
+ 'Sheet2.Range("B2").Resize(yPixelWidth / STEPNUM, xPixelWidth / STEPNUM) = arr
+ 'Sheet2.Range("B2").Resize(yPixelWidth / STEPNUM, xPixelWidth / STEPNUM).Interior.Color = RGB(104, 1, 1)
+ENDEND:
+Application.ScreenUpdating = True
+End Sub
+
+Public Function transRGB(ByVal ColorVal As Long, ByVal i1 As Integer, ByVal i2 As Integer)
+ Dim red As Long
+ Dim green As Long
+ Dim blue As Long
+ red = ColorVal Mod 256
+ green = (ColorVal \ 256) Mod 256
+ blue = ColorVal \ 256 \ 256
+ arrR(i1, i2) = red
+ arrG(i1, i2) = blue
+ arrB(i1, i2) = green
+End Function
